@@ -1,0 +1,3713 @@
+{
+	"info": {
+		"_postman_id": "e5a328d3-be64-4e31-bfe1-10c6089b10e8",
+		"name": "DEV Community",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17010272"
+	},
+	"item": [
+		{
+			"name": "Articles",
+			"item": [
+				{
+					"name": "PublishedArticles",
+					"item": [
+						{
+							"name": "Positive",
+							"item": [
+								{
+									"name": "PA-POS-01 (valid type)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct type_of\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i=0; i < jsonData.length; i++ ) {\r",
+													"    pm.expect(jsonData[i].type_of).to.eql(pm.environment.get(\"article_type_of\"));}\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-02 (page size default)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Default page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"articles_default_length\")))\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-03 (first page default)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/articles?page=1',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"   \r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"    \r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-04 (page eql int)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/articles?page=1',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page ID is not equal to current page ID\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.not.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?page={{int_page}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{int_page}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-05 (per-page eql int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"per_page_int\")))\r",
+													";\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?per_page={{per_page_int}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{per_page_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-06 (per-page eql valid max int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Page max length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"valid_maxint\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?per_page={{valid_maxint}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{valid_maxint}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-07 (valid tag)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Tag_list include correct tag\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i=0; i < jsonData.length; i++ ){\r",
+													"        pm.expect(jsonData[i].tag_list).to.include(pm.environment.get(\"tag\"))\r",
+													"    }\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?tag={{tag}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "tag",
+													"value": "{{tag}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-08 (using tag and popularity desc)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Descending public_reactions_count by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (i = 0; i < jsonData.length; i++) {\r",
+													"    pm.expect(jsonData[i].public_reactions_count).to.gte(jsonData[i+1].public_reactions_count)}\r",
+													"});\r",
+													"\r",
+													"\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?tag={{tag}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "tag",
+													"value": "{{tag}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-09 (tag and top)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Difference between current date and publication date lessThan or equal top_int\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i = 0; i < jsonData.length; i++) {\r",
+													"\r",
+													"        //получение даты в ответе\r",
+													"        var timestamp = jsonData[i].published_timestamp;\r",
+													"        var date = new Date(timestamp);\r",
+													"        var day = date.getDate();\r",
+													"\r",
+													"        //Получение текущей даты\r",
+													"        var today = new Date();\r",
+													"        var dayNow = today.getDate();\r",
+													"\r",
+													"        pm.expect((Number(dayNow)) - (Number(day))).to.lte(parseInt(pm.environment.get(\"top_int\")));        \r",
+													"\r",
+													"    }\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Tag_list include correct tag\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i=0; i < jsonData.length; i++ ){\r",
+													"        pm.expect(jsonData[i].tag_list).to.include(pm.environment.get(\"tag\"))\r",
+													"    }\r",
+													";\r",
+													"});\r",
+													"\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?tag={{tag}}&top={{top_int}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "tag",
+													"value": "{{tag}}"
+												},
+												{
+													"key": "top",
+													"value": "{{top_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-10 (valid tags)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Tags contain correct tags\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i=0; i < jsonData.length; i++ ){\r",
+													"        pm.expect(jsonData[i].tags).to.contain(pm.environment.get(\"tags\"))\r",
+													"    }\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?tags={{tags}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "tags",
+													"value": "{{tags}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-11 (using tags and desc popularity)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Descending public_reactions_count by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (i = 0; i < jsonData.length; i++) {\r",
+													"    pm.expect(jsonData[i].public_reactions_count).to.gte(jsonData[i+1].public_reactions_count)}\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?tags={{tags}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "tags",
+													"value": "{{tags}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-12 (valid tags_exclude)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Tags not contain specified value\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i=0; i < jsonData.length; i++ ){\r",
+													"        pm.expect(jsonData[i].tags).to.not.contain(pm.environment.get(\"tags\"))\r",
+													"    }\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?tags_exclude={{tags}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "tags_exclude",
+													"value": "{{tags}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-13 (using tags_exclude and desc popularity)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Descending public_reactions_count by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (i = 0; i < jsonData.length; i++) {\r",
+													"    pm.expect(jsonData[i].public_reactions_count).to.gte(jsonData[i+1].public_reactions_count)}\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?tags_exclude={{tags}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "tags_exclude",
+													"value": "{{tags}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-14 (valid username)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"All articles belong to the correct username\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i=0; i < jsonData.length; i++) {\r",
+													"        pm.expect(jsonData[i].user.name).to.contains(pm.environment.get(\"user\"));\r",
+													"    }\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles?name={{user}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "{{user}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-15 (top eql int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Difference between current date and publication date lessThan or equal top_int\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i = 0; i < jsonData.length; i++) {\r",
+													"\r",
+													"        //получение даты в ответе\r",
+													"        var timestamp = jsonData[i].published_timestamp;\r",
+													"        var date = new Date(timestamp);\r",
+													"        var day = date.getDate();\r",
+													"\r",
+													"        //Получение текущей даты\r",
+													"        var today = new Date();\r",
+													"        var dayNow = today.getDate();\r",
+													"\r",
+													"        pm.expect((Number(dayNow)) - (Number(day))).to.lte(parseInt(pm.environment.get(\"top_int\")));        \r",
+													"    }\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles?top={{top_int}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "top",
+													"value": "{{top_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-16 (valid collection_id)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Collection_id equal correct value\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i=0; i < jsonData.length; i++)\r",
+													"        pm.expect(jsonData[i].collection_id).to.equal(parseInt(pm.environment.get(\"collection_id\")));\r",
+													"\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles?collection_id={{collection_id}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "collection_id",
+													"value": "{{collection_id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-POS-17 (per-page valid border int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"pm.test(\"Page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"valid_border_int\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}/articles?per_page={{valid_border_int}}",
+											"host": [
+												"{{baseURL}}"
+											],
+											"path": [
+												"articles"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{valid_border_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative",
+							"item": [
+								{
+									"name": "PA-NEG-01 (page eql text)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/articles',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?page={{letters}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{letters}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-02 (page eql neg int)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/articles',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?page={{negative_int}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{negative_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-03 (page eql fraction)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/articles?page='+ Math.floor(pm.environment.get(\"fraction\")),\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct page after rounding\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?page={{fraction}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{fraction}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-04 (per-page eql zero)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Page size is 0\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"zero\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?per_page={{zero}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{zero}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-05 (per-page eql over valid max int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Page length equal valid_maxint\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"valid_maxint\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?per_page={{invatid_maxint}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{invatid_maxint}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-06 (per-page eql fraction)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct page size after rounding\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(Math.floor(pm.environment.get(\"fraction\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?per_page={{fraction}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{fraction}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-07 (per-page eql neg int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Default page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"articles_default_length\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?per_page={{negative_int}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{negative_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-08 (per-page eql text)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Default page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"articles_default_length\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?per_page={{letters}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{letters}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-09 (multiple 'tag')",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"No response body\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(0);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?tag={{two_tag}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "tag",
+													"value": "{{two_tag}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-10 (top eql text)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Response is empty\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(0);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?top={{letters}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "top",
+													"value": "{{letters}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-11 (top eql zero)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Response is empty\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(0);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?top={{zero}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "top",
+													"value": "{{zero}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-12 (top eql neg int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Response is empty\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(0);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?top={{negative_int}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "top",
+													"value": "{{negative_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-13 (top eql fraction)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Difference between current date and publication date lessThan or equal rounded fraction\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i = 0; i < jsonData.length; i++) {\r",
+													"\r",
+													"        //получение даты в ответе\r",
+													"        var timestamp = jsonData[i].published_timestamp;\r",
+													"        var date = new Date(timestamp);\r",
+													"        var day = date.getDate();\r",
+													"\r",
+													"        //Получение текущей даты\r",
+													"        var today = new Date();\r",
+													"        var dayNow = today.getDate();\r",
+													"\r",
+													"        pm.expect((Number(dayNow)) - (Number(day))).to.lte(Math.floor(parseInt(pm.environment.get(\"fraction\"))));        \r",
+													"    }\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?top={{fraction}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "top",
+													"value": "{{fraction}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-14 (neg collection_id)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"pm.test(\"Response is empty\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(0);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?collection_id={{negative_collection}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "collection_id",
+													"value": "{{negative_collection}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-15 (fraction collection_id)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Valid collection_id value after rounding\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    for (let i = 0; i < jsonData.length; i++) {\r",
+													"    pm.expect(jsonData[i].collection_id).to.equal(Math.floor(parseInt(pm.environment.get('fraction_collection'))));}\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?collection_id={{fraction_collection}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "collection_id",
+													"value": "{{fraction_collection}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PA-NEG-16 (text collection_id)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Response is empty\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(0);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles?collection_id={{letters}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"query": [
+												{
+													"key": "collection_id",
+													"value": "{{letters}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "CreateANewArticle",
+					"item": [
+						{
+							"name": "Positive",
+							"item": [
+								{
+									"name": "CA-POS-01 (check title)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Successful POST request\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(201);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct Title\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.title).to.eql(\"title\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\",\r\n        \"body_markdown\": \"Create article, check title\",\r\n        \"published\": false\r\n}\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CA-POS-02 (check body_markdown)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Successful POST request\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(201);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct body_markdown\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.body_markdown).to.equal(\"POST. Check body_markdown\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\",\r\n        \"body_markdown\": \"POST. Check body_markdown\",\r\n        \"published\": false\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CA-POS-03 (published is null)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Successful POST request\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(201);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Readable_publish_date is null\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.readable_publish_date).is.null\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\",\r\n        \"body_markdown\": \"POST. Published in null\",\r\n        \"published\": false\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CA-POS-04 (check default published)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Successful POST request\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(201);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Readable_publish_date is null by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.readable_publish_date).is.null\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\",\r\n        \"body_markdown\": \"POST. Default published false\"\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CA-POS-05 (check tags)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Successful POST request\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(201);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct tags\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.tags).to.contains(\"test\" && \"example\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\",\r\n        \"body_markdown\": \"POST. Tags equal 'test' && 'example\",\r\n        \"tags\": [\"test\", \"example\"]\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CA-POS-06 (check description)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Successful POST request\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(201);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct description\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.description).to.contain(\"Interesting description\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\",\r\n        \"body_markdown\": \"POST. Check description\",\r\n        \"description\": \"Interesting description\"\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CA-POS-07 (check main image)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Successful POST request\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(201);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Cover_image equal valid URL\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.cover_image).to.eql(\"https://res.cloudinary.com/practicaldev/image/fetch/s--muF2Qv-2--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://res.cloudinary.com/practicaldev/image/fetch/s--XHE_XeFn--/c_imagga_scale%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_300/https://dev-to-uploads.s3.amazonaws.com/i/y5767q6brm62skiyywvc.png\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\",\r\n        \"body_markdown\": \"POST. Check main image\",\r\n        \"main_image\": \"https://res.cloudinary.com/practicaldev/image/fetch/s--XHE_XeFn--/c_imagga_scale,f_auto,fl_progressive,q_auto,w_300/https://dev-to-uploads.s3.amazonaws.com/i/y5767q6brm62skiyywvc.png\"\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CA-POS-08 (check empty body_markdown)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Successful POST request\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(201);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Body_markdown.length equal 0\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.body_markdown.length).to.eql(0);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\",\r\n        \"body_markdown\": \"\"\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative",
+							"item": [
+								{
+									"name": "CA-NEG-01 (invalid main_page URL)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 422\", function () {\r",
+													"    pm.response.to.have.status(422);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct error text for image URL\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.error).to.contain(\"Main image is not a valid URL\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\",\r\n        \"body_markdown\": \"POST. Invalid main_page URL\",\r\n        \"main_image\": \"res.cloudinary.com/practicaldev/image/fetch/s--XHE_XeFn--/c_imagga_scale,f_auto,fl_progressive,q_auto,w_300/https://dev-to-uploads.s3.amazonaws.com/i/y5767q6brm62skiyywvc.png\"\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CA-NEG-04 (invalid main_page format)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 422\", function () {\r",
+													"    pm.response.to.have.status(422);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct error text for image URL\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.error).to.contain(\"Main image is not a valid URL\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\",\r\n        \"body_markdown\": \"POST. Invalid format main_page URL\",\r\n        \"main_image\": \"https://res.cloudinary.com/practicaldev/image/fetch/s--XHE_XeFn--/c_imagga_scale,f_auto,fl_progressive,q_auto,w_300/https://dev-to-uploads.s3.amazonaws.com/i/y5767q6brm62skiyywvc.pdf\"\r\n\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CA-NEG-02 (request without body_markdown)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 422\", function () {\r",
+													"    pm.response.to.have.status(422);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct error text for body markdown\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.error).to.eql(\"Body markdown is too short (minimum is 0 characters)\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"title\"\r\n            }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CA-NEG-03 (ckeck empty title)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 422\", function () {\r",
+													"    pm.response.to.have.status(422);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct error text for title\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.error).to.contain(\"Title can't be blank\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"article\": {\r\n        \"title\": \"\",\r\n        \"body_markdown\": \"POST. Title is 0\"\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseURL}}articles",
+											"host": [
+												"{{baseURL}}articles"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "PublishedArticlesSortedByPublishDate",
+					"item": [
+						{
+							"name": "Positive",
+							"item": [
+								{
+									"name": "SD-POS-01 (date desc)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Sort by date desc\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var date1;\r",
+													"    var date2;\r",
+													"    date1 = jsonData[0].published_timestamp;\r",
+													"    date2 = jsonData[1].published_timestamp;\r",
+													"    for (i = 0; i < jsonData.length; i++) {\r",
+													"    pm.expect(new Date(date1).getTime()).to.gte(new Date(date2).getTime())}\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?per_page=2",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-POS-02 (defaul page size)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Default page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"articles_default_length\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-POS-03 (first page default)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/articles/latest?page=1',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-POS-04 (page eql int)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/articles/latest',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page ID is not equal to current page ID\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.not.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?page={{int_page}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{int_page}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-POS-05 (per_page eql int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"per_page_int\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?per_page={{per_page_int}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{per_page_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-POS-06 (per_page eql valid max int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Page max length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"valid_maxint\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?per_page={{valid_maxint}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{valid_maxint}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-POS-07 (per_page valid border int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"pm.test(\"Page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"valid_border_int\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}/articles/latest?per_page={{valid_border_int}}",
+											"host": [
+												"{{baseURL}}"
+											],
+											"path": [
+												"articles",
+												"latest"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{valid_border_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative",
+							"item": [
+								{
+									"name": "SD-NEG-01 (page eql neg int)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/articles/latest?page=1',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?page={{negative_int}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{negative_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-NEG-02 (page eql text)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/articles/latest?page=1',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?page={{letters}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{letters}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-NEG-03 (page eql fraction)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/articles/latest?page='+ Math.floor(pm.environment.get(\"fraction\")),\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct page after rounding\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?page={{fraction}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{fraction}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-NEG-04 (per_page eql zero)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Page size is 0\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"zero\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?per_page={{zero}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{zero}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-NEG-05 (per_page eql neg int)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Default page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"articles_default_length\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?per_page={{negative_int}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{negative_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-NEG-06 (per_page eql fraction)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct page size after rounding\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(Math.floor(pm.environment.get(\"fraction\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?per_page={{fraction}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{fraction}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-NEG-07 (per_page eql text)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Default page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"articles_default_length\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?per_page={{letters}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{letters}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "SD-NEG-08 (per_page eql over valid max int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Page max length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"valid_maxint\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/latest?per_page={{invatid_maxint}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"latest"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{invatid_maxint}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "APublishedArticleByID",
+					"item": [
+						{
+							"name": "Positive",
+							"item": [
+								{
+									"name": "ID-POS-01 (valid id)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Valid ID value\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get('valid_ID')));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/{{valid_ID}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"{{valid_ID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative",
+							"item": [
+								{
+									"name": "ID-NEG-01 (negative id)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 404\", function () {\r",
+													"    pm.response.to.have.status(404);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct error text\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.error).to.contain(\"not found\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/{{negative_ID}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"{{negative_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "ID-NEG-02 (text id)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 404\", function () {\r",
+													"    pm.response.to.have.status(404);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct error text\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.error).to.contain(\"not found\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/{{letters}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"{{letters}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "ID-NEG-03 (fraction id)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"\r",
+													"pm.test(\"Valid ID value after rounding\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.id).to.equal(Math.floor(parseInt(pm.environment.get('fraction_ID'))));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/{{fraction_ID}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"{{fraction_ID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "APublishedArticleByPath",
+					"item": [
+						{
+							"name": "Positive",
+							"item": [
+								{
+									"name": "PTH-POS-01 (valid org username&slug)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct slug\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.slug).to.equal(pm.environment.get(\"slug_org\"));\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct organization`s username\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var org = jsonData.organization;\r",
+													"    pm.expect(org.username).to.equal(pm.environment.get(\"orgname\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/{{orgname}}/{{slug_org}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"{{orgname}}",
+												"{{slug_org}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PTH-POS-02 (valid user username&slug)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct user`s username\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var user = jsonData.user;\r",
+													"    pm.expect(user.username).to.equal(pm.environment.get(\"user\"));\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct slug\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.slug).to.eql(pm.environment.get(\"slug_user\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/{{user}}/{{slug_user}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"{{user}}",
+												"{{slug_user}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative",
+							"item": [
+								{
+									"name": "PTH-NEG-01 (only org username)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 404\", function () {\r",
+													"    pm.response.to.have.status(404);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct error text\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.error).to.contain(\"not found\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/{{orgname}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"{{orgname}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PTH-NEG-02 (only user username)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 404\", function () {\r",
+													"    pm.response.to.have.status(404);\r",
+													"});\r",
+													"pm.test(\"Correct error text\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.error).to.contain(\"not found\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/{{user}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"{{user}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PTH-NEG-03 (only slug)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 404\", function () {\r",
+													"    pm.response.to.have.status(404);\r",
+													"});\r",
+													"pm.test(\"Correct error text\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.error).to.contain(\"not found\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}articles/{{slug_user}}",
+											"host": [
+												"{{baseURL}}articles"
+											],
+											"path": [
+												"{{slug_user}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "ArticlesWithAVideo",
+					"item": [
+						{
+							"name": "Positive",
+							"item": [
+								{
+									"name": "V-POS-01 (valid type)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct type_of\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"     for (let i=0; i < jsonData.length; i++ ) {\r",
+													"    pm.expect(jsonData[i].type_of).to.eql(pm.environment.get(\"video_type_of\"));}\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos",
+											"host": [
+												"{{baseURL}}videos"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-POS-02 (page size default)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Default page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"videos_default_length\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos",
+											"host": [
+												"{{baseURL}}videos"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-POS-03 (first page default)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/videos?page=1',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos",
+											"host": [
+												"{{baseURL}}videos"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-POS-04 (page eql int)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/videos',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page ID is not equal to current page ID \", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.not.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?page={{int_page}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{int_page}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-POS-05 (per_page eql int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"per_page_int\")));\r",
+													"\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?per_page={{per_page_int}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{per_page_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-POS-06 (per_page eql valid max int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"pm.test(\"Page max length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"valid_maxint\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?per_page={{valid_maxint}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{valid_maxint}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-POS-07 (per_page valid border int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"pm.test(\"Page length correct\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"valid_border_int\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}/videos?per_page={{valid_border_int}}",
+											"host": [
+												"{{baseURL}}"
+											],
+											"path": [
+												"videos"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{valid_border_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative",
+							"item": [
+								{
+									"name": "V-NEG-01 (page eql text)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/videos',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?page={{letters}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{letters}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-NEG-02 (page eql neg int)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/videos',\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"First page by default\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?page={{negative_int}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{negative_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-NEG-03 (page eql fraction)",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.sendRequest({\r",
+													"    url: 'https://dev.to/api/videos?page='+ Math.floor(pm.environment.get(\"fraction\")),\r",
+													"    method: 'GET'}, function (err, response) {\r",
+													"    var jsonData = response.json()\r",
+													"    pm.variables.set(\"first_page_id\", jsonData[0].id)\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct page after rounding\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData[0].id).to.eql(pm.variables.get(\"first_page_id\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?page={{fraction}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "{{fraction}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-NEG-04 (per page eql zero)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Page size is 0\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"zero\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?per_page={{zero}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{zero}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-NEG-05 (per page eql neg int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct default page size\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"videos_default_length\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?per_page={{negative_int}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{negative_int}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-NEG-06 (per page eql fraction)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct page size after rounding\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(Math.floor(pm.environment.get(\"fraction\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?per_page={{fraction}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{fraction}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-NEG-07 (per page eql text)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Correct default page size\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"videos_default_length\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?per_page={{letters}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{letters}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "V-NEG-08 (per page eql over valid max int)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"pm.test(\"Page length equal valid_maxint\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.length).to.eql(parseInt(pm.environment.get(\"valid_maxint\")));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseURL}}videos?per_page={{invatid_maxint}}",
+											"host": [
+												"{{baseURL}}videos"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "{{invatid_maxint}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "api-key",
+				"type": "string"
+			},
+			{
+				"key": "in",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "r2cY4kPbFeCFkoz2DMCAKuzT",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
